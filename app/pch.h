@@ -18,3 +18,7 @@
 #define CONTROLLER_IOC_MAGIC 'k'
 #define CONTROLLER_IOC_SEND _IOWR(CONTROLLER_IOC_MAGIC, 1, int[2])
 #define CONTROLLER_IOC_RECV _IOWR(CONTROLLER_IOC_MAGIC, 1, bool)
+
+using std::cout;
+using std::cin;
+using std::endl;
