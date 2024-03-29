@@ -11,12 +11,18 @@
 #include <linux/slab.h>
 
 #define MODULE_NAME "controller"
+#define CONTROLLER_IOC_MAGIC 'k'
+#define CONTROLLER_IOC_SEND _IOWR(CONTROLLER_IOC_MAGIC, 1, int[2])
+#define CONTROLLER_IOC_RECV _IOWR(CONTROLLER_IOC_MAGIC, 1, bool)
+#define KILL 0
+#define STOP 1
+#define CONT 2
 
 /* Device variables */
 static int major_number;
 static struct cdev controller_cdev;
 static const struct file_operations controller_fops;
-
+static bool result;
 
 /* Driver Description. */
 MODULE_LICENSE("GPL");
@@ -56,6 +62,43 @@ static void __exit cleanup_controller(void){
 }
 
 static long controller_ioctl(struct file *file, unsigned int cmd, unsigned long arg){
+    int user_data[2];
+    switch(cmd){
+        case CONTROLLER_IOC_SEND:
+            if (copy_from_user(user_data, (int __user *)arg, sizeof(user_data))) {
+                return -EFAULT; // Error copying data from user space
+            }
+            switch(user_data[0]){
+                case KILL:
+                    result = sendSignalToTask(user_data[1], SIGKILL);
+                    printk(KERN_INFO "%s: kill signal sended to %d\n", MODULE_NAME, user_data[1]);                    
+                    break;
+
+                case STOP:
+                    result = sendSignalToTask(user_data[1], SIGSTOP);
+                    printk(KERN_INFO "%s: stop signal sended to %d\n", MODULE_NAME, user_data[1]);                    
+                    break;
+
+                case CONT:
+                    result = sendSignalToTask(user_data[1], SIGCONT);
+                    printk(KERN_INFO "%s: cont signal sended to %d\n", MODULE_NAME, user_data[1]);                    
+                    break;
+                
+                default:
+                    printk(KERN_INFO "%s: option not found\n", MODULE_NAME);
+                    result = false;
+            }
+            break;
+        case CONTROLLER_IOC_RECV:
+            if (copy_to_user((int __user *)arg, &result, sizeof(result))) {
+                return -EFAULT; // Error copying data to user space
+            }
+            printk(KERN_INFO "%s: result: %d", MODULE_NAME, result);                    
+            break;
+
+        default:
+            return -ENOTTY;
+    }
     return 0;
 }
 
