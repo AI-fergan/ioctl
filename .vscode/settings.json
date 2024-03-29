@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "kernel.h": "c",
-        "module.h": "c"
+        "module.h": "c",
+        "cstdlib": "cpp",
+        "iostream": "cpp"
     }
 }
