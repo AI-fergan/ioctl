@@ -5,7 +5,7 @@ for the purpose of controlling processes in the system.
 
 ## Run locally
 
-To deploy this project insert the module and then run the app
+Insert the module and then run the app
 
 #### Insert the module
 ```bash
