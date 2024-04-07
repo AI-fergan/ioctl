@@ -3,7 +3,7 @@ This project is a demonstration of use the ioctl functionality
 for communication between userspace and the kernel space 
 for the purpose of controlling processes in the system.
 
-## Deployment
+## Run locally
 
 To deploy this project insert the module and then run the app
 
